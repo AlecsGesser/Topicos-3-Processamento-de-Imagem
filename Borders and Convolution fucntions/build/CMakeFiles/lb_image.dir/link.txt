@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblb_image.a  CMakeFiles/lb_image.dir/src/Image.cpp.o
+/usr/bin/ranlib liblb_image.a

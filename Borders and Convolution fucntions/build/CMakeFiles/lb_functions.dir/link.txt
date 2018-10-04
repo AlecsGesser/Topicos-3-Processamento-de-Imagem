@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblb_functions.a  CMakeFiles/lb_functions.dir/src/functions.cpp.o
+/usr/bin/ranlib liblb_functions.a

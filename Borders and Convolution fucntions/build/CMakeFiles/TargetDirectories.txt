@@ -1,0 +1,5 @@
+/home/alecsander/Área de Trabalho/Topicos 3/TRABALHO 2 IMAGE LIBRARY/build/CMakeFiles/edit_cache.dir
+/home/alecsander/Área de Trabalho/Topicos 3/TRABALHO 2 IMAGE LIBRARY/build/CMakeFiles/rebuild_cache.dir
+/home/alecsander/Área de Trabalho/Topicos 3/TRABALHO 2 IMAGE LIBRARY/build/CMakeFiles/tr2.dir
+/home/alecsander/Área de Trabalho/Topicos 3/TRABALHO 2 IMAGE LIBRARY/build/CMakeFiles/lb_functions.dir
+/home/alecsander/Área de Trabalho/Topicos 3/TRABALHO 2 IMAGE LIBRARY/build/CMakeFiles/lb_image.dir
