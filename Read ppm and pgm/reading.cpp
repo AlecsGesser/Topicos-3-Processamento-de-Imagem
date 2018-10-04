@@ -1,9 +1,10 @@
+// ALECSANDER PASQUALLI GESSER
+// UNIVERSIDADE FEDERAL DE SANTA CATARINA - CAMPUS ARARANGUA
+
 #include <iostream>
 #include "stdlib.h"
 #include "math.h"
- using namespace std;
-
-
+using namespace std;
 
  class Mat{
  public:
@@ -16,9 +17,9 @@
  	int get(int x, int y);
  	void set(int x, int y);
  	Mat clone();
- 
 
- }; 
+
+ };
   void threshold(Mat& src, Mat& output, int value);
   void negative(Mat& src, Mat& dst);
   void brilho(Mat& src, Mat& dst, int value);
@@ -44,17 +45,17 @@
 			data = new unsigned char[H*W];
 			for(int i =0; i < H*W ; i++){
 				fscanf(fp,"%hhu", &data[i]);
-			}			
+			}
  		}
  		if(type[1] == '3'){
  			data = new unsigned char[H*W*3];
 			for(int i =0; i < H*W*3 ; i++){
 				fscanf(fp,"%hhu", &data[i]);
-			}			
+			}
  		}
  	}
  	fclose(fp);
- } 
+ }
 
  void Mat::save(char* namefile){
 
@@ -72,15 +73,15 @@
  		if(type[1] == '2'){
 			for(int i =0; i < H*W ; i++){
 				fprintf(fp,"%hhu\n", data[i]);
-			}			
+			}
  		}
  		if(type[1] == '3'){
 			for(int i =0; i < H*W*3 ; i++){
 				fprintf(fp,"%hhu\n", data[i]);
-			}			
+			}
  		}
  	}
- 	
+
  	fclose(fp);
 
  }
@@ -92,24 +93,24 @@
  	out.H = this->H;
  	out.W = this->W;
  	out.alpha = this->alpha;
-	
+
 
  	if(this->type[0] == 'P'){
  		if(this->type[1] == '2'){
  			out.data = new unsigned char[out.H*out.W];
 			for(int i =0; i < this->H*this->W ; i++){
 				out.data[i] = this->data[i];
-			}			
+			}
  		}
  		if(type[1] == '3'){
  			out.data = new unsigned char[out.H*out.W*3];
 			for(int i =0; i < H*W*3 ; i++){
 				out.data[i] = this->data[i];
-			}			
+			}
  		}
  	}
 
- 	return out; 	
+ 	return out;
 }
 
  int Mat::get(int x, int y){
@@ -141,8 +142,8 @@ int main(int argc, char** argv)
  	threshold(m1, m2, 50);
 
  	m2.save("m2");
-	
- 
+
+
  	m1.save("saida");
 
 
@@ -162,7 +163,7 @@ void threshold(Mat& src, Mat& output, int value)
 				}else{
 					output.data[i] = 0;
 				}
-			}			
+			}
  		}
  		if(src.type[1] == '3'){
 			for(int i =0; i < src.H*src.W*3 ; i=+3){
@@ -179,7 +180,7 @@ void threshold(Mat& src, Mat& output, int value)
 				}else{
 					output.data[i] = 0;
 				}
-			}			
+			}
  		}
  	}
 }
@@ -188,16 +189,16 @@ void negative(Mat& src, Mat& dst){
 	dst = src.clone();
 	if(src.type[0] == 'P'){
  		if(src.type[1] == '2'){
-			for(int i =0; i < src.H*src.W ; i++){						
+			for(int i =0; i < src.H*src.W ; i++){
 					dst.data[i] =  255 - src.data[i];
-			}			
+			}
  		}
  		if(src.type[1] == '3'){
 			for(int i =0; i < src.H*src.W*3 ; i+=3){
 				dst.data[i] = 255 - src.data[i];
 				dst.data[i+1] = 255 - src.data[i+1];
 				dst.data[i+2] = 255 - src.data[i+2];
-			}			
+			}
  		}
  	}
 }
@@ -209,21 +210,21 @@ void brilho(Mat& src, Mat& dst, int value){
 			for(int i =0; i < src.H*src.W ; i++){
 				double aux = src.data[i] + value;
 				if(aux >= 255){
-					dst.data[i] = 255;	
+					dst.data[i] = 255;
 				}else{
 					dst.data[i] =  src.data[i] + value;
 				}
-			}			
+			}
  		}
  		if(src.type[1] == '3'){
 			for(int i =0; i < src.H*src.W*3 ; i++){
 				double aux = src.data[i] + value;
 				if(aux >= 255){
-					dst.data[i] = 255;	
+					dst.data[i] = 255;
 				}else{
 					dst.data[i] =  src.data[i] + value;
 				}
-			}			
+			}
  		}
  	}
 }
