@@ -16,6 +16,7 @@ class Flood{
 private:
 	Mat m_source;
 	Mat m_mask;
+	vector<vector<Point> > mean;
 
 public:
 	Flood();
@@ -30,4 +31,3 @@ public:
 };
 
 #endif // FLOOD_HPP defined
-
