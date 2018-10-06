@@ -1,6 +1,8 @@
-#include "segmentator.hpp"
+#pragma once
+#include "Flood.hpp"
 
-Flood::Flood(Mat input, in thr){
+
+Flood::Flood(Mat input, int thr){
 	setSource(input, thr);
 }
 
@@ -16,7 +18,7 @@ void Flood::setSource(Mat input, int threshold){
 
 }
 
-void Flood::SetMask(){
+void Flood::setMask(){
 	m_Mask = Mat::zeros(m_Source.size(), CV_8UC1);
 }
 
@@ -153,9 +155,17 @@ int Flood::ExtractPartition(Point ponto,  unsigned int index){
 	m_numberofRegions++;
 
 
+	m_Mask.at<uchar>(Point(ponto.x , ponto.y)) = indexToMark;
 
 	while(stack.size() > 0){
 		int position = getNextPosition(ponto);
+		namedWindow("temp",2);
+		imshow("temp", m_Mask);
+	//	waitKey(0);
+		cout<<position<<endl;
+		// cout<<ponto<<endl;
+		cout<<area<<endl;
+
 
 		switch(position){
 			case 1:
@@ -191,26 +201,28 @@ int Flood::ExtractPartition(Point ponto,  unsigned int index){
 				stack.push_back(ponto);
 				break;
 			case 6:
-				m_Mask.at<uchar>(Point(ponto.x , ponto.y-1)) = indexToMark;
+				m_Mask.at<uchar>(Point(ponto.x+1 , ponto.y+1)) = indexToMark;
 				area++;
-				ponto.y--;
+				ponto.y++;
+				ponto.x++;
 				stack.push_back(ponto);
 				break;
 			case 7:
-				m_Mask.at<uchar>(Point(ponto.x , ponto.y-1)) = indexToMark;
+				m_Mask.at<uchar>(Point(ponto.x+1 , ponto.y)) = indexToMark;
 				area++;
-				ponto.y--;
+				ponto.x++;
 				stack.push_back(ponto);
 				break;
 			case 8:
-				m_Mask.at<uchar>(Point(ponto.x , ponto.y-1)) = indexToMark;
+				m_Mask.at<uchar>(Point(ponto.x+1 , ponto.y-1)) = indexToMark;
 				area++;
+				ponto.x++;
 				ponto.y--;
 				stack.push_back(ponto);
 				break;
 			case 0:
-				stack.pop_back();
 				ponto = stack.at(stack.size()-1);
+				stack.pop_back();
 		}
 	}
 
@@ -232,7 +244,7 @@ Mat Flood::getRegions(){
 	vector<Vec3b> cores;
 	Mat output = Mat::zeros(m_Source.size(), m_Source.type());
 
-	for(int i = 0 ; i < m_numberofRegions ; i++){
+	for(int i = 0 ; i < m_numberofRegions +10; i++){
 		cores.push_back(Vec3b(rand()%256,rand()%256,rand()%256));
 	}
 	for (size_t i = 0; i < m_Mask.rows; i++) {

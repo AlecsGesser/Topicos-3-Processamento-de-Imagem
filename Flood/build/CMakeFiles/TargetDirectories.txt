@@ -1,0 +1,4 @@
+/home/alecs/github/Topicos-3---Processamento-de-Imagens/Flood/build/CMakeFiles/rebuild_cache.dir
+/home/alecs/github/Topicos-3---Processamento-de-Imagens/Flood/build/CMakeFiles/edit_cache.dir
+/home/alecs/github/Topicos-3---Processamento-de-Imagens/Flood/build/CMakeFiles/lb_flood.dir
+/home/alecs/github/Topicos-3---Processamento-de-Imagens/Flood/build/CMakeFiles/segmenta.dir
