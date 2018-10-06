@@ -27,7 +27,7 @@ public:
 	Mat getRegions();
 
 
-}
+};
 
 #endif // FLOOD_HPP defined
 
