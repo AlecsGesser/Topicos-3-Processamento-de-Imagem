@@ -20,6 +20,8 @@ private:
 	vector<vector<Point> > mean;
 	int m_numberofRegions;
 	int m_thr;
+	Vec3b m_Ref;
+	Mat m_canny;
 
 public:
 	Flood();
@@ -27,11 +29,12 @@ public:
 	void setSource(Mat input, int threshold);
 	void setMask();
 	int getNextPosition(Point pt);
-	int ExtractPartition(Point ponto, unsigned int index);
-	bool checkDistance(Vec3b current, Vec3b next);
+	int ExtractPartition(Point ponto,  float index);
+	bool checkDistance(Vec3b current, Vec3b next, Point pt);
 	Mat getRegions();
 	Mat process();
 	bool checkMask(Point pt);
+	void updateRef(Point pt);
 };
 
 #endif // FLOOD_HPP defined

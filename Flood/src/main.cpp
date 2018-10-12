@@ -6,12 +6,15 @@ int main(int argc, char** argv) {
    Mat input;
 
    input = imread(argv[1]);
+   //cvtColor(input, input, CV_BGR2HSV);
 
    Flood segmentado(input, atoi(argv[2]));
    Mat saida = segmentado.process();
 
    namedWindow("saida",2);
+   namedWindow("entrada",2);
    imshow("saida", saida);
+   imshow("entrada", input);
 
    waitKey(0);
 

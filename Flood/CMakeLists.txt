@@ -7,8 +7,14 @@ set(CMAKE_CXX_FLAGS "-g -ggdb -Wall -fpermissive")
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
+
+
 add_executable(segmenta src/main.cpp)
+
 target_link_libraries( segmenta ${OpenCV_LIBS} )
+
 target_link_libraries( segmenta lb_flood )
 
 add_library(lb_flood src/Flood.cpp)
+
+target_link_libraries( lb_flood ${OpenCV_LIBS} )

@@ -15,11 +15,25 @@ void Flood::setSource(Mat input, int threshold){
 	setMask();
 	m_numberofRegions=0;
 	m_thr = threshold;
+	GaussianBlur(input,input,Size(3,3), 3,3);
+	GaussianBlur(input,m_Source,Size(3,3), 3,3);
+	Canny(input, m_canny, 40, 255, 3,3);
+	namedWindow("canny",2);
+	imshow("canny", m_canny);
+	waitKey(0);
+
 
 }
 
 void Flood::setMask(){
-	m_Mask = Mat::zeros(m_Source.size(), CV_8UC1);
+	m_Mask = Mat::zeros(m_Source.size(), CV_32F);
+}
+
+void Flood::updateRef(Point pt){
+	Vec3b temp = m_Source.at<Vec3b>(pt);
+	m_Ref[0] = (m_Ref[0] + temp[0])/2;
+	m_Ref[1] = (m_Ref[1] + temp[1])/2;
+	m_Ref[2] = (m_Ref[2] + temp[2])/2; 
 }
 
 int Flood::getNextPosition(Point pt){
@@ -32,7 +46,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( up );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 1;
 			}
 		}
@@ -47,7 +61,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( left_up );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 2;
 			}
 		}
@@ -62,7 +76,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( left );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 3;
 			}
 		}
@@ -77,7 +91,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( left_down );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 4;
 			}
 		}
@@ -93,7 +107,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( down );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 5;
 			}
 		}
@@ -108,7 +122,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( down_right );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 6;
 			}
 		}
@@ -123,7 +137,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( right );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 7;
 			}
 		}
@@ -138,7 +152,7 @@ int Flood::getNextPosition(Point pt){
 		{
 			Vec3b current = m_Source.at<Vec3b>(pt);
 			Vec3b next_p  = m_Source.at<Vec3b>( right_up );
-			if(checkDistance(current, next_p)){
+			if(checkDistance(current, next_p, pt)){
 				return 8;
 			}
 		}
@@ -146,78 +160,110 @@ int Flood::getNextPosition(Point pt){
 	return 0;
 }
 
-int Flood::ExtractPartition(Point ponto,  unsigned int index){
+int Flood::ExtractPartition(Point ponto,  float index){
 	vector<Point> stack;
 	stack.push_back(ponto);
 
-	int indexToMark = index;
+	int indexToMark = index+50;
 	int area =  1;
+
+	m_Ref = m_Source.at<Vec3b>(ponto);
 	m_numberofRegions++;
+	updateRef(ponto);
+	namedWindow("temp",2);
+	namedWindow("travel",2);
 
 
 	m_Mask.at<uchar>(Point(ponto.x , ponto.y)) = indexToMark;
 
 	while(stack.size() > 0){
 		int position = getNextPosition(ponto);
-		namedWindow("temp",2);
-		imshow("temp", m_Mask);
-	//	waitKey(0);
-		cout<<position<<endl;
-		// cout<<ponto<<endl;
-		cout<<area<<endl;
+		
+		Mat mpt = Mat::zeros(m_Source.size(), CV_8UC1);
+		mpt.at<uchar>(ponto) = 255;
+
+		// if(area > 4) {
+			
+		// 	imshow("travel", mpt);
+		// 	imshow("temp", m_Mask);
+		// 	waitKey(10);
+		// }
+
+		// if(position == 0) {
+			
+		// 	
+		// }
+
+	// if(ponto.x % 75 ==0 ) {
+	// 	imshow("travel", mpt);
+	// 	imshow("temp", m_Mask);
+	// 	cout<<"parou"<<endl;
+	// 	waitKey(2);
+	// 	cout<<index<<endl;
+	// }
+		
 
 
 		switch(position){
 			case 1:
-				m_Mask.at<uchar>(Point(ponto.x , ponto.y-1)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x , ponto.y-1)) = indexToMark;
 				area++;
+				
 				ponto.y--;
+				updateRef(ponto);
+
 				stack.push_back(ponto);
 				break;
 			case 2:
-				m_Mask.at<uchar>(Point(ponto.x-1 , ponto.y-1)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x-1 , ponto.y-1)) = indexToMark;
 				area++;
 				ponto.y--;
 				ponto.x--;
+				updateRef(ponto);
 				stack.push_back(ponto);
 				break;
 			case 3:
-				m_Mask.at<uchar>(Point(ponto.x-1 , ponto.y)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x-1 , ponto.y)) = indexToMark;
 				area++;
 				ponto.x--;
+				updateRef(ponto);
 				stack.push_back(ponto);
 				break;
 			case 4:
-				m_Mask.at<uchar>(Point(ponto.x-1 , ponto.y+1)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x-1 , ponto.y+1)) = indexToMark;
 				area++;
 				ponto.y++;
 				ponto.x--;
+				updateRef(ponto);
 				stack.push_back(ponto);
 				break;
 			case 5:
-				m_Mask.at<uchar>(Point(ponto.x , ponto.y+1)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x , ponto.y+1)) = indexToMark;
 				area++;
 				ponto.y++;
 				stack.push_back(ponto);
 				break;
 			case 6:
-				m_Mask.at<uchar>(Point(ponto.x+1 , ponto.y+1)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x+1 , ponto.y+1)) = indexToMark;
 				area++;
 				ponto.y++;
 				ponto.x++;
+				updateRef(ponto);
 				stack.push_back(ponto);
 				break;
 			case 7:
-				m_Mask.at<uchar>(Point(ponto.x+1 , ponto.y)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x+1 , ponto.y)) = indexToMark;
 				area++;
 				ponto.x++;
+				updateRef(ponto);
 				stack.push_back(ponto);
 				break;
 			case 8:
-				m_Mask.at<uchar>(Point(ponto.x+1 , ponto.y-1)) = indexToMark;
+				m_Mask.at<float>(Point(ponto.x+1 , ponto.y-1)) = indexToMark;
 				area++;
 				ponto.x++;
 				ponto.y--;
+				updateRef(ponto);
 				stack.push_back(ponto);
 				break;
 			case 0:
@@ -231,9 +277,9 @@ int Flood::ExtractPartition(Point ponto,  unsigned int index){
 
 }
 
-bool Flood::checkDistance(Vec3b current, Vec3b next){
-	float DE = sqrt ( pow((current[0]-next[0]),2) +  pow((current[1]-next[1]),2) + pow((current[2]-next[2]),2) );
-	if( DE <= m_thr){
+bool Flood::checkDistance(Vec3b current, Vec3b next, Point pt){
+	float DE = sqrt ( pow((current[0]-next[0]),2) +  pow((current[1] - next[1]),2) + pow((current[2] - next[2]),2) );
+	if( (DE <= m_thr) && (m_canny.at<uchar>(pt) == 0)){
 		return true;
 	}else{
 		return false;
@@ -243,7 +289,7 @@ bool Flood::checkDistance(Vec3b current, Vec3b next){
 Mat Flood::getRegions(){
 	vector<Vec3b> cores;
 	Mat output = Mat::zeros(m_Source.size(), m_Source.type());
-
+cout<<"regions entered"<<endl;
 	for(int i = 0 ; i < m_numberofRegions +10; i++){
 		cores.push_back(Vec3b(rand()%256,rand()%256,rand()%256));
 	}
@@ -260,15 +306,21 @@ Mat Flood::getRegions(){
 }
 
 Mat Flood::process(){
-	int k=0;
+	float k=0;
 	for (size_t i = 0; i < m_Source.rows; i++) {
 		for (size_t j = 0; j < m_Source.cols; j++) {
 			if(checkMask(Point(j,i))){
-				int area = ExtractPartition(Point(j,i), ++k );
-				cout<<"area: "<<area<<endl;
+				k+=0.5;
+				int area = ExtractPartition(Point(j,i), k );
+			//	cout<<"area "<<k<<" = "<<area<<endl;
 			}
+
 		}
+		imshow("temp", m_Mask);
+		//waitKey(0);
+		cout<<i<<endl;
 	}
+
 	return getRegions();
 }
 
